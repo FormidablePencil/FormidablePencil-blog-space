@@ -4,6 +4,7 @@ import Bio from "@nehalist/gatsby-theme-nehalem/src/components/bio";
 import Theme from "@nehalist/gatsby-theme-nehalem/src/styles/theme";
 import Carbon from "react-carbon";
 import AdStyle from "./style";
+import { graphql } from "gatsby";
 
 const StickySidebarContent = styled.div`
   position: sticky;

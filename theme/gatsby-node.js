@@ -1,6 +1,6 @@
-const fs      = require('fs');
-const mkdirp  = require('mkdirp');
-const path    = require('path');
+const fs = require('fs');
+const mkdirp = require('mkdirp');
+const path = require('path');
 const slugify = require('slugify');
 
 /**
@@ -10,7 +10,7 @@ exports.onPreBootstrap = ({ store }, themeOptions) => {
   const { program } = store.getState();
 
   const contentPath = themeOptions.contentPath || 'content';
-  const dir         = path.join(program.directory, contentPath);
+  const dir = path.join(program.directory, contentPath);
 
   if (!fs.existsSync(dir)) {
     mkdirp(dir);
@@ -22,6 +22,8 @@ exports.createPages = async ({ graphql, actions, reporter }, themeOptions) => {
 
   const result = await graphql(`
     query {
+
+
       pages: allMarkdownRemark(
         filter: { fileAbsolutePath: { regex: "/(\\/pages\\/).*.(md)/" } }
       ) {
@@ -35,6 +37,7 @@ exports.createPages = async ({ graphql, actions, reporter }, themeOptions) => {
           }
         }
       }
+
       posts: allMarkdownRemark(
         filter: { fileAbsolutePath: { regex: "/(posts)/.*\\\\.md$/" } }
         sort: { fields: frontmatter___created, order: DESC }
@@ -70,6 +73,17 @@ exports.createPages = async ({ graphql, actions, reporter }, themeOptions) => {
           }
         }
       }
+
+      pagesWpCms: wpgraphql {
+        posts {
+          nodes {
+            title
+            excerpt
+          }
+        }
+      }
+      
+      
       tags: allTags {
         edges {
           node {
@@ -84,9 +98,10 @@ exports.createPages = async ({ graphql, actions, reporter }, themeOptions) => {
     reporter.panic(result.errors);
   }
 
-  const tags          = [];
-  const posts         = result.data.posts.edges.map(node => node.node);
-  const pages         = result.data.pages.edges.map(node => node.node);
+  
+  const tags = [];
+  const posts = result.data.posts.edges.map(node => node.node);
+  const pages = result.data.pages.edges.map(node => node.node);
   const availableTags = result.data.tags.edges.map(node => node.node).map(t => t.name) || [];
 
   // Create a route for every single post (located in `content/posts`)
@@ -133,6 +148,7 @@ exports.createPages = async ({ graphql, actions, reporter }, themeOptions) => {
     path: "/",
     component: require.resolve(`./src/templates/posts.tsx`),
     context: {
+      pagesWpCms: result.data.pagesWpCms,
       posts,
       postsPerPage
     }

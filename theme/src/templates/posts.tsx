@@ -14,6 +14,7 @@ interface PostsPageProps {
   pathContext: {
     posts: Post[];
     postsPerPage: number;
+    pagesWpCms: any
   };
   location: Location;
 }
@@ -86,7 +87,8 @@ const PostsPage: FunctionComponent<PostsPageProps> = ({ pathContext, location })
         <PostsContainer>
           {posts.map((post, index) => (
             <Card
-              title={post.frontmatter.title}
+              // title={post.frontmatter.title}
+              title={pathContext.pagesWpCms.posts.nodes[index].title}
               path={post.frontmatter.path}
               featuredImage={post.frontmatter.featuredImage ? post.frontmatter.featuredImage.childImageSharp : null}
               content={post.frontmatter.excerpt}
